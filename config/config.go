@@ -6,12 +6,13 @@ import (
 )
 
 type Config struct {
-	Store           string             `json:"store"`
-	Use12Hours      bool               `json:"use12hours"`
-	UseDecimalHours string             `json:"usedecimalhours"` //"On", "Off", "Both" valid values
-	Editor          string             `json:"editor"`
-	ReportPath      string             `json:"report-path"`
-	Projects        map[string]Project `json:"projects"`
+	Store           string              `json:"store"`
+	Use12Hours      bool                `json:"use12hours"`
+	UseDecimalHours string              `json:"usedecimalhours"` //"On", "Off", "Both" valid values
+	Editor          string              `json:"editor"`
+	ReportPath      string              `json:"report-path"`
+	Hooks           map[string][]string `json:"hooks"`
+	Projects        map[string]Project  `json:"projects"`
 }
 
 type Project struct {
@@ -24,9 +25,9 @@ var cached *Config
 // Config instance. If no configuration file is found, nil and no error will be
 // returned. The configuration must live in one of the following directories:
 //
-//	- /etc/timetrace
-//	- $HOME/.timetrace
-//	- .
+//   - /etc/timetrace
+//   - $HOME/.timetrace
+//   - .
 //
 // In case multiple configuration files are found, the one in the most specific
 // or "closest" directory will be preferred.

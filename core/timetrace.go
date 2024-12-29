@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -93,6 +94,10 @@ func (t *Timetrace) Start(projectKey string, isBillable bool, tags []string) err
 		Tags:       tags,
 	}
 
+	if err := t.ExecHook("record-start"); err != nil {
+		return err
+	}
+
 	return t.SaveRecord(record, false)
 }
 
@@ -178,6 +183,10 @@ func (t *Timetrace) Stop() error {
 	end := time.Now()
 	latestRecord.End = &end
 
+	if err := t.ExecHook("record-stop"); err != nil {
+		return err
+	}
+
 	return t.SaveRecord(*latestRecord, true)
 }
 
@@ -216,6 +225,18 @@ func (t *Timetrace) Report(filter ...func(*Record) bool) (*Reporter, error) {
 // will be used if not set path falls-back to $HOME/.timetrace/reports/report-<time.unix>
 func (t *Timetrace) WriteReport(path string, data []byte) error {
 	return t.fs.WriteReport(path, data)
+}
+
+func (t *Timetrace) ExecHook(hook string) error {
+	h, ok := t.config.Hooks[hook]
+	if !ok || len(h) == 0 {
+		return nil
+	}
+	path := h[0]
+	args := h[1:]
+	cmd := exec.Command(path, args...)
+	_, err := cmd.Output()
+	return err
 }
 
 func (t *Timetrace) EnsureDirectories() error {
