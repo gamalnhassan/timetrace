@@ -105,13 +105,13 @@ func (f *Formatter) FormatDuration(duration time.Duration) string {
 	var response string
 	switch f.useDecimalHours {
 	case "Both":
-		response = fmt.Sprintf("%dh %dmin %.1fh", hours, minutes, dec)
+		response = fmt.Sprintf("%d:%02d %.1fh", hours, minutes, dec)
 	case "On":
 		response = fmt.Sprintf("%.1fh", dec)
 	case "Off":
-		response = fmt.Sprintf("%dh %dmin", hours, minutes)
+		response = fmt.Sprintf("%d:%02d", hours, minutes)
 	default:
-		response = fmt.Sprintf("%dh %dmin", hours, minutes)
+		response = fmt.Sprintf("%d:%02d", hours, minutes)
 	}
 	return response
 }
